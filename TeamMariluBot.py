@@ -1,4 +1,5 @@
 from telegram.ext import Updater, CommandHandler
+from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
 from pydrive.auth import GoogleAuth
 import sqlite3 as lite
 from time import mktime
@@ -17,8 +18,9 @@ def teammarilu(bot, update):
 
 def drive(bot, update):
     gauth = GoogleAuth()
-    # Create local webserver and auto handles authentication.
-    gauth.LocalWebserverAuth()
+    auth_url = gauth.GetAuthUrl() # Create authentication url user needs to visit
+    code = AskUserToVisitLinkAndGiveCode(auth_url) # Your customized authentication flow
+    gauth.Auth(code) # Authorize and build service from the code
 
 def get_gmt(p_chat_id, p_chat_title, p_chat_username):
     update.message.reply_text('get_gmt...')
@@ -44,8 +46,11 @@ def get_gmt(p_chat_id, p_chat_title, p_chat_username):
 
 def checkpoints(bot, update):
     update.message.reply_text('checkpoints...1')
-    #gmt_value = get_gmt(update.message.chat.id, update.message.chat.title, update.message.chat.username)
-    gmt_value = get_gmt(update.message.chat.id, '', '')
+    update.message.reply_text(format(update.message.chat))
+    chatid = update.message.chat.id
+    chattitle = update.message.chat.title
+    chatusername = update.message.chat.username
+    gmt_value = get_gmt(chatid, chattitle, chatusername)
     update.message.reply_text('checkpoints...2')
     t0 = datetime.strptime('2014-07-09 15', '%Y-%m-%d %H') + timedelta(hours=gmt_value)
     update.message.reply_text('checkpoints...3')
@@ -81,6 +86,27 @@ def checkpoints(bot, update):
     res = ' \n '.join(acheckpoints)
     update.message.reply_text(res)
 
+def error_callback(bot, update, error):
+    try:
+        raise error
+    except Unauthorized:
+        # remove update.message.chat_id from conversation list
+        update.message.reply_text('Unauthorized')
+    except BadRequest:
+        # handle malformed requests - read more below!
+        update.message.reply_text('BadRequest')
+    except TimedOut:
+        # handle slow connection problems
+        update.message.reply_text('TimedOut')
+    except NetworkError:
+        # handle other connection problems
+        update.message.reply_text('NetworkError')
+    except ChatMigrated as e:
+        # the chat_id of a group has changed, use e.new_chat_id instead
+        update.message.reply_text('ChatMigrated')
+    except TelegramError:
+        # handle all other telegram related errors
+        update.message.reply_text('TelegramError')
 
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
 
@@ -89,6 +115,7 @@ updater.dispatcher.add_handler(CommandHandler('hola', hello))
 updater.dispatcher.add_handler(CommandHandler('teammarilu', teammarilu))
 updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
+updater.dispatcher.add_error_handler(error_callback)
 
 updater.start_polling()
 updater.idle()
