@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, Job
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
 from pydrive.auth import GoogleAuth
 import sqlite3 as lite
@@ -6,15 +6,32 @@ from time import mktime
 from datetime import datetime, timedelta
 from unicodedata import normalize
 
+def get_chat_timezone(p_chat_id):
+    print('--get_chat_timezone--')
+    query = "SELECT timezone FROM chat_settings WHERE chat_id=:CHATID", {"CHATID: p_chat_id"}
+    print(query)
+
+    conn = lite.connect('checkpoint_settings.db')
+    cur = conn.cursor()
+    cur.execute(query)
+    str_timezone = cur.fetchone()[0]
+    conn.commit()
+    conn.close()
+
+    print(str_timezone)
+
+    return str_timezone
+
 def start(bot, update):
-    update.message.reply_text('Oli')
+    print('--info--')
+    update.message.reply_text(format(get_chat_timezone(update.message.chat.id)))
+    update.message.reply_text(format(update))
 
 def hello(bot, update):
-    update.message.reply_text(
-        'Hola {}'.format(update.message.from_user.first_name))
+    update.message.reply_text('Hola {}'.format(update.message.from_user.first_name))
 
 def teammarilu(bot, update):
-    update.message.reply_text('Invocando a @Rottenman @victorono @MalKarakter')
+    bot.sendMessage('Invocan a @Rottenman @victorono @MalKarakter')
 
 def drive(bot, update):
     gauth = GoogleAuth()
@@ -24,7 +41,7 @@ def drive(bot, update):
 
 def get_gmt(p_chat_id, p_chat_title, p_chat_username):
     update.message.reply_text('get_gmt...')
-    conn = lite.connect('gmt.db')
+    conn = lite.connect('checkpoint_settings.db')
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM chat_gmt WHERE chat_id=:CHATID", {"CHATID": p_chat_id})
     gmt_value_count = cur.fetchone()[0]
@@ -45,31 +62,21 @@ def get_gmt(p_chat_id, p_chat_title, p_chat_username):
     return gmt_value
 
 def checkpoints(bot, update):
-    update.message.reply_text('checkpoints...1')
     update.message.reply_text(format(update.message.chat))
     chatid = update.message.chat.id
     chattitle = update.message.chat.title
     chatusername = update.message.chat.username
     gmt_value = get_gmt(chatid, chattitle, chatusername)
-    update.message.reply_text('checkpoints...2')
-    t0 = datetime.strptime('2014-07-09 15', '%Y-%m-%d %H') + timedelta(hours=gmt_value)
-    update.message.reply_text('checkpoints...3')
-    hours_per_cycle = 175
 
-    update.message.reply_text('checkpoints...4')
+    t0 = datetime.strptime('2014-07-09 15', '%Y-%m-%d %H') + timedelta(hours=gmt_value)
+    hours_per_cycle = 175
 
     t = datetime.now()
 
-    update.message.reply_text('checkpoints...5')
-
     seconds = mktime(t.timetuple()) - mktime(t0.timetuple())
-    update.message.reply_text('checkpoints...6')
     cycles = seconds // (3600 * hours_per_cycle)
-    update.message.reply_text('checkpoints...7')
     start = t0 + timedelta(hours=cycles * hours_per_cycle)
-    update.message.reply_text('checkpoints...8')
     checkpoints = map(lambda x: start + timedelta(hours=x), range(0, hours_per_cycle, 5))
-    update.message.reply_text('checkpoints...9')
     nextcp_mark = False
 
     acheckpoints = []
@@ -86,36 +93,20 @@ def checkpoints(bot, update):
     res = ' \n '.join(acheckpoints)
     update.message.reply_text(res)
 
-def error_callback(bot, update, error):
-    try:
-        raise error
-    except Unauthorized:
-        # remove update.message.chat_id from conversation list
-        update.message.reply_text('Unauthorized')
-    except BadRequest:
-        # handle malformed requests - read more below!
-        update.message.reply_text('BadRequest')
-    except TimedOut:
-        # handle slow connection problems
-        update.message.reply_text('TimedOut')
-    except NetworkError:
-        # handle other connection problems
-        update.message.reply_text('NetworkError')
-    except ChatMigrated as e:
-        # the chat_id of a group has changed, use e.new_chat_id instead
-        update.message.reply_text('ChatMigrated')
-    except TelegramError:
-        # handle all other telegram related errors
-        update.message.reply_text('TelegramError')
+def notify_checkpoint(bot, job):
+    bot.sendMessage(chat_id=37307558, text='Oli')
 
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
 
-updater.dispatcher.add_handler(CommandHandler('start', start))
+updater.dispatcher.add_handler(CommandHandler('info', start))
 updater.dispatcher.add_handler(CommandHandler('hola', hello))
 updater.dispatcher.add_handler(CommandHandler('teammarilu', teammarilu))
 updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
-updater.dispatcher.add_error_handler(error_callback)
+
+#jobqueue = updater.job_queue
+#checkpoint_queue = Job(notify_checkpoint, 10.0)
+#jobqueue.put(checkpoint_queue, next_t=5.0)
 
 updater.start_polling()
 updater.idle()
