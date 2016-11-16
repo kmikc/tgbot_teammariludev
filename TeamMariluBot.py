@@ -7,25 +7,22 @@ from datetime import datetime, timedelta
 from unicodedata import normalize
 
 def get_chat_timezone(p_chat_id):
-    print('--get_chat_timezone--')
-    query = "SELECT timezone FROM chat_settings WHERE chat_id=:CHATID", {"CHATID: p_chat_id"}
-    print(query)
+    query = "SELECT timezone FROM chat_settings WHERE chat_id={CHATID};".format(CHATID=p_chat_id)
 
     conn = lite.connect('checkpoint_settings.db')
     cur = conn.cursor()
     cur.execute(query)
-    str_timezone = cur.fetchone()[0]
+    str_timezone = cur.fetchone()
+
+    str_timezone = str_timezone[0]
     conn.commit()
     conn.close()
-
-    print(str_timezone)
 
     return str_timezone
 
 def start(bot, update):
-    print('--info--')
-    update.message.reply_text(format(get_chat_timezone(update.message.chat.id)))
-    update.message.reply_text(format(update))
+    chat_id = update.message.chat.id
+    update.message.reply_text(get_chat_timezone(chat_id))
 
 def hello(bot, update):
     update.message.reply_text('Hola {}'.format(update.message.from_user.first_name))
