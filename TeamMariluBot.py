@@ -1,10 +1,58 @@
-from telegram.ext import Updater, CommandHandler, Job
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, Job, CallbackQueryHandler
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
 from pydrive.auth import GoogleAuth
 import sqlite3 as lite
 from time import mktime
 from datetime import datetime, timedelta
 from unicodedata import normalize
+
+def settings(bot, update):
+    keyboard =  [
+                    [InlineKeyboardButton("Africa", callback_data='Africa'), InlineKeyboardButton("America", callback_data='America'), InlineKeyboardButton("Asia", callback_data='Asia'), InlineKeyboardButton("Australia", callback_data='Australia')],
+                    [InlineKeyboardButton("Europe", callback_data='Europe'), InlineKeyboardButton("Indian", callback_data='Indian'), InlineKeyboardButton("Pacific", callback_data='Pacific')]
+                ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text('Configurando zona horaria:', reply_markup=reply_markup)
+
+
+def timezone_africa(bot, update):
+    print '--timezone_africa--'
+
+def button(bot, update):
+    query = update.callback_query
+    data = query.data
+    chat_id = query.message.chat_id
+    message_id = query.message.message_id
+
+    if data == 'Africa':
+        print 'Africa...'
+        #timezone_africa()
+
+    elif data == 'America':
+        print 'America...'
+
+    elif data == 'Asia':
+        print 'Asia...'
+
+    elif data == 'Australia':
+        print 'Australia...'
+
+    elif data == 'Europe':
+        print 'Europa...'
+
+    elif data == 'Indian':
+        print 'India...'
+
+    elif data == 'Pacific':
+        print 'Pacifico...'
+
+    else:
+        print 'timezone...'
+
+    bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id)
+
 
 def get_chat_timezone(p_chat_id):
     query = "SELECT timezone FROM chat_settings WHERE chat_id={CHATID};".format(CHATID=p_chat_id)
@@ -20,21 +68,26 @@ def get_chat_timezone(p_chat_id):
 
     return str_timezone
 
+
 def start(bot, update):
     chat_id = update.message.chat.id
     update.message.reply_text(get_chat_timezone(chat_id))
 
+
 def hello(bot, update):
     update.message.reply_text('Hola {}'.format(update.message.from_user.first_name))
 
+
 def teammarilu(bot, update):
     bot.sendMessage('Invocan a @Rottenman @victorono @MalKarakter')
+
 
 def drive(bot, update):
     gauth = GoogleAuth()
     auth_url = gauth.GetAuthUrl() # Create authentication url user needs to visit
     code = AskUserToVisitLinkAndGiveCode(auth_url) # Your customized authentication flow
     gauth.Auth(code) # Authorize and build service from the code
+
 
 def get_gmt(p_chat_id, p_chat_title, p_chat_username):
     update.message.reply_text('get_gmt...')
@@ -57,6 +110,7 @@ def get_gmt(p_chat_id, p_chat_title, p_chat_username):
     update.message.reply_text(gmt_value)
 
     return gmt_value
+
 
 def checkpoints(bot, update):
     update.message.reply_text(format(update.message.chat))
@@ -90,8 +144,10 @@ def checkpoints(bot, update):
     res = ' \n '.join(acheckpoints)
     update.message.reply_text(res)
 
+
 def notify_checkpoint(bot, job):
     bot.sendMessage(chat_id=37307558, text='Oli')
+
 
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
 
@@ -100,6 +156,8 @@ updater.dispatcher.add_handler(CommandHandler('hola', hello))
 updater.dispatcher.add_handler(CommandHandler('teammarilu', teammarilu))
 updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
+updater.dispatcher.add_handler(CommandHandler('settings', settings))
+updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
 #jobqueue = updater.job_queue
 #checkpoint_queue = Job(notify_checkpoint, 10.0)
