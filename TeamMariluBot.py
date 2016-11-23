@@ -1,5 +1,5 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, Job, CallbackQueryHandler
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardHide
+from telegram.ext import Updater, CommandHandler, Job, CallbackQueryHandler, ConversationHandler
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
 from pydrive.auth import GoogleAuth
 import sqlite3 as lite
@@ -7,7 +7,22 @@ from time import mktime
 from datetime import datetime, timedelta
 from unicodedata import normalize
 
-def settings(bot, update):
+def settings(bot, update, query):
+    keyboard =  [
+                    [InlineKeyboardButton("Africa", callback_data='Africa'), InlineKeyboardButton("America", callback_data='America'), InlineKeyboardButton("Asia", callback_data='Asia'), InlineKeyboardButton("Australia", callback_data='Australia')],
+                    [InlineKeyboardButton("Europe", callback_data='Europe'), InlineKeyboardButton("Indian", callback_data='Indian'), InlineKeyboardButton("Pacific", callback_data='Pacific')]
+                ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    #update.message.reply_text('Configurando zona horaria:', reply_markup=reply_markup)
+    bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
+def settings0(bot, update):
+    bot.sendMessage(chat_id=update.message.chat.id, text='settings...')
+    settings1(bot, update)
+
+
+def settings1(bot, update):
     keyboard =  [
                     [InlineKeyboardButton("Africa", callback_data='Africa'), InlineKeyboardButton("America", callback_data='America'), InlineKeyboardButton("Asia", callback_data='Asia'), InlineKeyboardButton("Australia", callback_data='Australia')],
                     [InlineKeyboardButton("Europe", callback_data='Europe'), InlineKeyboardButton("Indian", callback_data='Indian'), InlineKeyboardButton("Pacific", callback_data='Pacific')]
@@ -51,7 +66,8 @@ def button(bot, update):
     else:
         print 'timezone...'
 
-    bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id)
+    #bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id)
+    settings(bot, update, query)
 
 
 def get_chat_timezone(p_chat_id):
@@ -149,6 +165,17 @@ def notify_checkpoint(bot, job):
     bot.sendMessage(chat_id=37307558, text='Oli')
 
 
+def prueba(bot, update):
+    keyboard =  [
+                    [InlineKeyboardButton("Africa", callback_data='Africa')]
+                ]
+
+    #reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = ReplylineKeyboardMarkup(keyboard)
+    update.message.reply_text('BOTON:', reply_markup=reply_markup)
+
+
+
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
 
 updater.dispatcher.add_handler(CommandHandler('info', start))
@@ -156,8 +183,9 @@ updater.dispatcher.add_handler(CommandHandler('hola', hello))
 updater.dispatcher.add_handler(CommandHandler('teammarilu', teammarilu))
 updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
-updater.dispatcher.add_handler(CommandHandler('settings', settings))
+updater.dispatcher.add_handler(CommandHandler('settings', settings0))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
+updater.dispatcher.add_handler(CommandHandler('prueba', prueba))
 
 #jobqueue = updater.job_queue
 #checkpoint_queue = Job(notify_checkpoint, 10.0)
