@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardHide
 from telegram.ext import Updater, CommandHandler, Job, CallbackQueryHandler, ConversationHandler
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
@@ -6,6 +9,16 @@ import sqlite3 as lite
 from time import mktime
 from datetime import datetime, timedelta
 from unicodedata import normalize
+
+def settings_menu(bot, update):
+    keyboard = [
+        [
+            InlineKeyboardButton('Configurar timezone', callback_data='set_timezone')
+        ]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text('Seleccion opción a configurar:', reply_markup=reply_markup)
+
 
 def settings(bot, update, query):
     keyboard =  [
@@ -40,34 +53,17 @@ def button(bot, update):
     data = query.data
     chat_id = query.message.chat_id
     message_id = query.message.message_id
+    flag = True
 
-    if data == 'Africa':
-        print 'Africa...'
-        #timezone_africa()
-
-    elif data == 'America':
-        print 'America...'
-
-    elif data == 'Asia':
-        print 'Asia...'
-
-    elif data == 'Australia':
-        print 'Australia...'
-
-    elif data == 'Europe':
-        print 'Europa...'
-
-    elif data == 'Indian':
-        print 'India...'
-
-    elif data == 'Pacific':
-        print 'Pacifico...'
+    if data == 'set_timezone':
+        print 'Configurar timezone...'
 
     else:
-        print 'timezone...'
+        flag = False
 
-    #bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id)
-    settings(bot, update, query)
+    if ( flag ):
+        #bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id)
+        settings(bot, update, query)
 
 
 def get_chat_timezone(p_chat_id):
@@ -183,7 +179,7 @@ updater.dispatcher.add_handler(CommandHandler('hola', hello))
 updater.dispatcher.add_handler(CommandHandler('teammarilu', teammarilu))
 updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
-updater.dispatcher.add_handler(CommandHandler('settings', settings0))
+updater.dispatcher.add_handler(CommandHandler('settings', settings_menu))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
 updater.dispatcher.add_handler(CommandHandler('prueba', prueba))
 
