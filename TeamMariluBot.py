@@ -20,15 +20,37 @@ def settings_menu(bot, update):
     update.message.reply_text('Seleccion opción a configurar:', reply_markup=reply_markup)
 
 
-def settings(bot, update, query):
-    keyboard =  [
-                    [InlineKeyboardButton("Africa", callback_data='Africa'), InlineKeyboardButton("America", callback_data='America'), InlineKeyboardButton("Asia", callback_data='Asia'), InlineKeyboardButton("Australia", callback_data='Australia')],
-                    [InlineKeyboardButton("Europe", callback_data='Europe'), InlineKeyboardButton("Indian", callback_data='Indian'), InlineKeyboardButton("Pacific", callback_data='Pacific')]
-                ]
+def settings_timezone(bot, update, query):
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    #update.message.reply_text('Configurando zona horaria:', reply_markup=reply_markup)
-    bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+    if query.data == 'set_timezone':
+        keyboard =  [
+                        [InlineKeyboardButton("Africa", callback_data='Africa'), InlineKeyboardButton("America", callback_data='America'), InlineKeyboardButton("Asia", callback_data='Asia'), InlineKeyboardButton("Australia", callback_data='Australia')],
+                        [InlineKeyboardButton("Europe", callback_data='Europe'), InlineKeyboardButton("Indian", callback_data='Indian'), InlineKeyboardButton("Pacific", callback_data='Pacific')]
+                    ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
+    elif query.data == 'Africa':
+        keyboard =  [
+                        [InlineKeyboardButton('Abidjan', callback_data='Africa/Abidjan')],
+                        [InlineKeyboardButton('Accra', callback_data='Africa/Accra')],
+                        [InlineKeyboardButton('Addis_Ababa', callback_data='Africa/Addis_Ababa')],
+                        [InlineKeyboardButton('Algiers', callback_data='Africa/Algiers')],
+                        [InlineKeyboardButton('Asmara', callback_data='Africa/Asmara')],
+                        [InlineKeyboardButton('Asmera', callback_data='Africa/Asmera')],
+                        [InlineKeyboardButton('Bamako', callback_data='Africa/Bamako')],
+                        [InlineKeyboardButton('Bangui', callback_data='Africa/Bangui')],
+                        [InlineKeyboardButton('Banjul', callback_data='Africa/Banjul')],
+                        [InlineKeyboardButton('Bissau', callback_data='Africa/Bissau')],
+                        [InlineKeyboardButton('Blantyre', callback_data='Africa/Blantyre')],
+                        [InlineKeyboardButton('Brazzaville', callback_data='Africa/Brazzaville')],
+                        [InlineKeyboardButton('Bujumbura', callback_data='Africa/Bujumbura')],
+                    ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
 
 def settings0(bot, update):
     bot.sendMessage(chat_id=update.message.chat.id, text='settings...')
@@ -45,25 +67,17 @@ def settings1(bot, update):
     update.message.reply_text('Configurando zona horaria:', reply_markup=reply_markup)
 
 
-def timezone_africa(bot, update):
-    print '--timezone_africa--'
-
 def button(bot, update):
     query = update.callback_query
     data = query.data
     chat_id = query.message.chat_id
     message_id = query.message.message_id
-    flag = True
 
-    if data == 'set_timezone':
-        print 'Configurar timezone...'
+    if (data == 'set_timezone') or (data == 'Africa') or (data == 'America') or (data == 'Asia') or (data == 'Australia') or (data == 'Europe') or (data == 'Indian') or (data == 'Pacific'):
+        settings_timezone(bot, update, query)
 
     else:
-        flag = False
-
-    if ( flag ):
-        #bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id)
-        settings(bot, update, query)
+        bot.editMessageText(text=format(query), chat_id=chat_id, message_id=message_id)
 
 
 def get_chat_timezone(p_chat_id):
@@ -161,17 +175,6 @@ def notify_checkpoint(bot, job):
     bot.sendMessage(chat_id=37307558, text='Oli')
 
 
-def prueba(bot, update):
-    keyboard =  [
-                    [InlineKeyboardButton("Africa", callback_data='Africa')]
-                ]
-
-    #reply_markup = InlineKeyboardMarkup(keyboard)
-    reply_markup = ReplylineKeyboardMarkup(keyboard)
-    update.message.reply_text('BOTON:', reply_markup=reply_markup)
-
-
-
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
 
 updater.dispatcher.add_handler(CommandHandler('info', start))
@@ -181,7 +184,6 @@ updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
 updater.dispatcher.add_handler(CommandHandler('settings', settings_menu))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
-updater.dispatcher.add_handler(CommandHandler('prueba', prueba))
 
 #jobqueue = updater.job_queue
 #checkpoint_queue = Job(notify_checkpoint, 10.0)
