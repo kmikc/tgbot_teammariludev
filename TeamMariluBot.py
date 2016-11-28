@@ -105,7 +105,7 @@ def hello(bot, update):
 
 
 def teammarilu(bot, update):
-    bot.sendMessage('Invocan a @Rottenman @victorono @MalKarakter')
+    bot.sendMessage(chat_id=update.message.chat.id, text='Invocan a @Rottenman @victorono @MalKarakter')
 
 
 def drive(bot, update):
