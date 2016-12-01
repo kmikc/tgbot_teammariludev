@@ -24,9 +24,9 @@ def settings_timezone(bot, update, query):
 
     if query.data == 'set_timezone':
         keyboard =  [
-                        [InlineKeyboardButton("Africa", callback_data='TIMEZONE_CONTINUE:Africa'), InlineKeyboardButton("America", callback_data='TIMEZONE_CONTINUE:America'), InlineKeyboardButton("Asia", callback_data='TIMEZONE_CONTINUE:Asia'), InlineKeyboardButton("Australia", callback_data='TIMEZONE_CONTINUE:Australia')],
-                        [InlineKeyboardButton("Europe", callback_data='TIMEZONE_CONTINUE:Europe'), InlineKeyboardButton("Indian", callback_data='TIMEZONE_CONTINUE:Indian'), InlineKeyboardButton("Pacific", callback_data='TIMEZONE_CONTINUE:Pacific')]
-                    ]
+            [InlineKeyboardButton("Africa", callback_data='TIMEZONE_CONTINUE:Africa'), InlineKeyboardButton("America", callback_data='TIMEZONE_CONTINUE:America'), InlineKeyboardButton("Asia", callback_data='TIMEZONE_CONTINUE:Asia'), InlineKeyboardButton("Australia", callback_data='TIMEZONE_CONTINUE:Australia')],
+            [InlineKeyboardButton("Europe", callback_data='TIMEZONE_CONTINUE:Europe'), InlineKeyboardButton("Indian", callback_data='TIMEZONE_CONTINUE:Indian'), InlineKeyboardButton("Pacific", callback_data='TIMEZONE_CONTINUE:Pacific')]
+        ]
 
         reply_markup = InlineKeyboardMarkup(keyboard)
         bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
@@ -123,7 +123,6 @@ def settings_timezone(bot, update, query):
             [InlineKeyboardButton('Lima', callback_data='TIMEZONE_SAVE:Lima')],
             [InlineKeyboardButton('Los_Angeles', callback_data='TIMEZONE_SAVE:Los_Angeles')],
             [InlineKeyboardButton('Louisville', callback_data='TIMEZONE_SAVE:Louisville')],
-            [InlineKeyboardButton('Lower_Princes', callback_data='TIMEZONE_SAVE:Lower_Princes')],
             [InlineKeyboardButton('Maceio', callback_data='TIMEZONE_SAVE:Maceio')],
             [InlineKeyboardButton('Managua', callback_data='TIMEZONE_SAVE:Managua')],
             [InlineKeyboardButton('Manaus', callback_data='TIMEZONE_SAVE:Manaus')],
@@ -149,6 +148,7 @@ def settings_timezone(bot, update, query):
             [InlineKeyboardButton('Noronha', callback_data='TIMEZONE_SAVE:Noronha')],
             [InlineKeyboardButton('Ojinaga', callback_data='TIMEZONE_SAVE:Ojinaga')],
             [InlineKeyboardButton('Panama', callback_data='TIMEZONE_SAVE:Panama')],
+            [InlineKeyboardButton('Lower_Princes', callback_data='TIMEZONE_SAVE:Lower_Princes')],
             [InlineKeyboardButton('Pangnirtung', callback_data='TIMEZONE_SAVE:Pangnirtung')],
             [InlineKeyboardButton('Paramaribo', callback_data='TIMEZONE_SAVE:Paramaribo')],
             [InlineKeyboardButton('Phoenix', callback_data='TIMEZONE_SAVE:Phoenix')],
@@ -192,6 +192,55 @@ def settings_timezone(bot, update, query):
             [InlineKeyboardButton('Yakutat', callback_data='TIMEZONE_SAVE:Yakutat')],
             [InlineKeyboardButton('Yellowknife', callback_data='TIMEZONE_SAVE:Yellowknife')],
         ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
+    elif query.data == 'Asia':
+
+        keyboard = [
+            [InlineKeyboardButton('Aden', callback_data='TIMEZONE_SAVE:Asia/Aden')],
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
+    elif query.data == 'Australia':
+
+        keyboard = [
+            [InlineKeyboardButton('Adelaide', callback_data='TIMEZONE_SAVE:Australia/Adelaide')],
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
+    elif query.data == 'Europe':
+
+        keyboard = [
+            [InlineKeyboardButton('Amsterdam', callback_data='TIMEZONE_SAVE:Europe/Amsterdam')],
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
+    elif query.data == 'Indian':
+
+        keyboard = [
+            [InlineKeyboardButton('Antananarivo', callback_data='TIMEZONE_SAVE:Indian/Antananarivo')],
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
+    elif query.data == 'Pacific':
+
+        keyboard = [
+            [InlineKeyboardButton('Apia', callback_data='TIMEZONE_SAVE:Pacific/Apia')],
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        bot.editMessageText(text="Zona horaria: %s" % query.data, chat_id=query.message.chat_id, message_id=query.message.message_id, reply_markup=reply_markup)
+
 
 def settings0(bot, update):
     bot.sendMessage(chat_id=update.message.chat.id, text='settings...')
