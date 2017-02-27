@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardHide
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardHide, KeyboardButton
 from telegram.ext import Updater, CommandHandler, Job, CallbackQueryHandler, ConversationHandler
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
 from pydrive.auth import GoogleAuth
@@ -365,6 +365,20 @@ def notify_checkpoint(bot, job):
     bot.sendMessage(chat_id=37307558, text='Oli')
 
 
+def test_location(bot, update):
+    #print "test_location"
+    #print bot
+    #print update
+    chat_id = update.message.chat.id
+    location_keyboard = KeyboardButton(text="send location", request_location=True)
+    contact_keyboard = KeyboardButton(text="send_contact", request_contact=True)
+    custom_keyboard = [[ location_keyboard, contact_keyboard ]]
+    reply_markup = ReplyKeyboardMarkup(custom_keyboard)
+    bot.sendMessage(chat_id=chat_id, text="Would you mind sharing your location and contact with me?", reply_markup=reply_markup)
+    #reply_markup = ReplyKeyboardHide()
+    #bot.sendMessage(chat_id=chat_id, text="Tiene que ir un texto", reply_markup=reply_markup)
+
+
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
 
 updater.dispatcher.add_handler(CommandHandler('info', start))
@@ -373,6 +387,7 @@ updater.dispatcher.add_handler(CommandHandler('teammarilu', teammarilu))
 updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
 updater.dispatcher.add_handler(CommandHandler('settings', settings_menu))
+updater.dispatcher.add_handler(CommandHandler('test_location', test_location))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
 #jobqueue = updater.job_queue
