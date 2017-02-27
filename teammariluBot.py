@@ -22,6 +22,8 @@ def settings_menu(bot, update):
 
 def settings_timezone(bot, update, query):
 
+    print "settings_timezone"
+
     if query.data == 'set_timezone':
         keyboard =  [
             [InlineKeyboardButton("Africa", callback_data='TIMEZONE_CONTINUE:Africa'), InlineKeyboardButton("America", callback_data='TIMEZONE_CONTINUE:America'), InlineKeyboardButton("Asia", callback_data='TIMEZONE_CONTINUE:Asia'), InlineKeyboardButton("Australia", callback_data='TIMEZONE_CONTINUE:Australia')],
@@ -366,17 +368,18 @@ def notify_checkpoint(bot, job):
 
 
 def test_location(bot, update):
-    #print "test_location"
+    print "test_location"
     #print bot
     #print update
     chat_id = update.message.chat.id
-    location_keyboard = KeyboardButton(text="send location", request_location=True)
-    contact_keyboard = KeyboardButton(text="send_contact", request_contact=True)
-    custom_keyboard = [[ location_keyboard, contact_keyboard ]]
+    location_keyboard = KeyboardButton(text="Enviar ubicación", request_location=True)
+    #contact_keyboard = KeyboardButton(text="send_contact", request_contact=True)
+    #custom_keyboard = [[ location_keyboard, contact_keyboard ]]
+    custom_keyboard = [[ location_keyboard ]]
     reply_markup = ReplyKeyboardMarkup(custom_keyboard)
-    bot.sendMessage(chat_id=chat_id, text="Would you mind sharing your location and contact with me?", reply_markup=reply_markup)
-    #reply_markup = ReplyKeyboardHide()
-    #bot.sendMessage(chat_id=chat_id, text="Tiene que ir un texto", reply_markup=reply_markup)
+    bot.sendMessage(chat_id=chat_id, text="Esperando ubicación", reply_markup=reply_markup)
+    reply_markup = ReplyKeyboardHide()
+    bot.sendMessage(chat_id=chat_id, text="Tiene que ir un texto", reply_markup=reply_markup)
 
 
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
