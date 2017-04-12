@@ -381,8 +381,8 @@ def test_location(bot, update):
     reply_markup = ReplyKeyboardHide()
     bot.sendMessage(chat_id=chat_id, text="Tiene que ir un texto", reply_markup=reply_markup)
 
-
-updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
+tk = open('token').read().rstrip('\n')
+updater = Updater(tk)
 
 updater.dispatcher.add_handler(CommandHandler('info', start))
 updater.dispatcher.add_handler(CommandHandler('hola', hello))
