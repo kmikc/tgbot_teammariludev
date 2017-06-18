@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import requests, HTMLParser
+from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardHide, KeyboardButton
 from telegram.ext import Updater, CommandHandler, Job, CallbackQueryHandler, ConversationHandler
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
@@ -382,6 +384,27 @@ def test_location(bot, update):
     bot.sendMessage(chat_id=chat_id, text="Tiene que ir un texto", reply_markup=reply_markup)
 
 
+def saldo(bot, update):
+    print "saldo"
+    r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={'numerotarjeta': 36108253014267396})
+    
+    #r.text
+    responsetext = r.text
+    print responsetext
+
+    #HTMLParser
+    html_parser = HTMLParser.HTMLParser()
+    responsetext_unescaped = html_parser.unescape(responsetext)
+    print responsetext_unescaped
+
+    #BeautifulSoup
+    responsetext_unescaped_beautiful = unicode(BeautifulSoup(responsetext_unescaped, convertEntities=BeautifulStoneSoup.ALL_ENTITIES).text)
+
+    bot.sendMessage(chat_id=update.message.chat.id, text=responsetext_unescaped_beautiful)
+
+
+
+
 updater = Updater('189612249:AAFRvgiS71TiU6mb6Pu_nf0gVHmNMdc-8h0')
 
 updater.dispatcher.add_handler(CommandHandler('info', start))
@@ -391,6 +414,7 @@ updater.dispatcher.add_handler(CommandHandler('drive', drive))
 updater.dispatcher.add_handler(CommandHandler('checkpoints', checkpoints))
 updater.dispatcher.add_handler(CommandHandler('settings', settings_menu))
 updater.dispatcher.add_handler(CommandHandler('test_location', test_location))
+updater.dispatcher.add_handler(CommandHandler('saldo', saldo))
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
 #jobqueue = updater.job_queue
