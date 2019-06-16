@@ -22,7 +22,7 @@ def settings_menu(bot, update):
 
 def settings_timezone(bot, update, query):
 
-    print "settings_timezone"
+    print("settings_timezone")
 
     if query.data == 'set_timezone':
         keyboard =  [
@@ -368,7 +368,7 @@ def notify_checkpoint(bot, job):
 
 
 def test_location(bot, update):
-    print "test_location"
+    print("test_location")
     #print bot
     #print update
     chat_id = update.message.chat.id
