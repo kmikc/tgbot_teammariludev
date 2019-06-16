@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import requests, HTMLParser
-from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
+import requests
+from html.parser import HTMLParser
+from bs4 import BeautifulSoup, BeautifulStoneSoup
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardHide, KeyboardButton
 from telegram.ext import Updater, CommandHandler, Job, CallbackQueryHandler, ConversationHandler
 from telegram.error import (TelegramError, Unauthorized, BadRequest, TimedOut, ChatMigrated, NetworkError)
@@ -387,17 +388,17 @@ tk = open('token').read().rstrip('\n')
 updater = Updater(tk)
 
 def saldo(bot, update):
-    print "saldo"
+    print("saldo")
     r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={'numerotarjeta': 36108253014267396})
-    
+
     #r.text
     responsetext = r.text
-    print responsetext
+    print(responsetext)
 
     #HTMLParser
     html_parser = HTMLParser.HTMLParser()
     responsetext_unescaped = html_parser.unescape(responsetext)
-    print responsetext_unescaped
+    print(responsetext_unescaped)
 
     #BeautifulSoup
     responsetext_unescaped_beautiful = unicode(BeautifulSoup(responsetext_unescaped, convertEntities=BeautifulStoneSoup.ALL_ENTITIES).text)
